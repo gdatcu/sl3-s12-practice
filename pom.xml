@@ -12,8 +12,10 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Valoare default pentru rularea testelor (rulează tot dacă nu se specifică altfel) -->
         <test.suite>**/*IT.java</test.suite>
+
+        <!-- Definim o valoare implicită pentru nivelul de logare al aplicației -->
+        <app.log.level>info</app.log.level>
     </properties>
 
     <dependencies>
@@ -33,7 +35,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <!-- Source: https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -51,16 +52,18 @@
                 <version>3.5.2</version>
                 <configuration>
                     <includes>
-                        <!-- Surefire va folosi proprietatea dinamică injectată de profiluri -->
                         <include>${test.suite}</include>
                     </includes>
+                    <!-- FIX: Transmitem dinamic valoarea către noul proces JVM pornit de Surefire -->
+                    <systemPropertyVariables>
+                        <org.slf4j.simpleLogger.defaultLogLevel>${app.log.level}</org.slf4j.simpleLogger.defaultLogLevel>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
-        <!-- Profilul QA: Rulează toate clasele de test -->
         <profile>
             <id>qa</id>
             <properties>
@@ -68,15 +71,14 @@
             </properties>
         </profile>
 
-        <!-- Profilul Extra Logging: Forțează Maven să afișeze loguri de tip INFO -->
         <profile>
             <id>extra-logging</id>
             <properties>
-                <org.slf4j.simpleLogger.defaultLogLevel>error</org.slf4j.simpleLogger.defaultLogLevel>
+                <!-- Schimbă aici nivelul dorit (ex: 'error' pentru a ascunde INFO/WARN sau 'debug'/'trace' pentru detalii maxime) -->
+                <app.log.level>error</app.log.level>
             </properties>
         </profile>
 
-        <!-- Profilul DEV: Rulează doar clasa SimpleApiTest.java -->
         <profile>
             <id>dev</id>
             <properties>

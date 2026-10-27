@@ -24,7 +24,7 @@ public class SimpleApiTest {
                     .then()
                     .log().all()
                     .assertThat()
-                    .statusCode(200)
+                    .statusCode(201)
 
                     // 1. REST Assured Built-in Validation: This will FAIL the test if it takes more than 2000 milliseconds
                     .time(lessThan(2000L), TimeUnit.MILLISECONDS)
